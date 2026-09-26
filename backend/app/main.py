@@ -37,18 +37,27 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Enable CORS for local development & cross-origin frontend apps
-origins = [
-    settings.FRONTEND_URL,
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:3000",
-    "*"  # Allow mobile web/dev testing on local network
-]
+# Configure CORS dynamically for local development & production frontend origin
+def get_cors_origins():
+    origins = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+    ]
+    if settings.FRONTEND_URL:
+        clean_url = settings.FRONTEND_URL.strip().rstrip("/")
+        if clean_url and clean_url not in origins:
+            origins.append(clean_url)
+    if settings.ALLOWED_ORIGINS:
+        for item in settings.ALLOWED_ORIGINS.split(","):
+            cleaned = item.strip().rstrip("/")
+            if cleaned and cleaned not in origins:
+                origins.append(cleaned)
+    return origins
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=get_cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

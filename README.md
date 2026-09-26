@@ -86,3 +86,34 @@ npm run dev
 ```
 
 Vite app opens at `http://localhost:5173`.
+
+---
+
+## 🌐 Vercel Deployment Guide
+
+JARVIS is prepared for multi-service serverless deployment on Vercel (`frontend` static build + `backend` Python serverless FastAPI).
+
+### 1. Root Configuration (`vercel.json`)
+The root `vercel.json` maps incoming requests:
+- `/api/*` $\rightarrow$ `backend/app/main.py` (@vercel/python)
+- `/*` $\rightarrow$ `frontend/package.json` (@vercel/static-build)
+
+### 2. Required Vercel Environment Variables
+Set the following environment variables in your **Vercel Project Settings**:
+
+#### **Backend Environment Variables** (Required for serverless runtime):
+- `GEMINI_API_KEY`: Your Google Gemini API Key (*Secret*).
+- `GEMINI_MODEL`: Primary model (Optional, default `gemini-3.6-flash`).
+- `GEMINI_FALLBACK_MODEL`: Fallback model (Optional, default `gemini-3.1-flash-lite`).
+- `DATABASE_URL`: PostgreSQL / Supabase connection URL (*e.g., `postgresql://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres`*).
+- `FRONTEND_URL`: Your deployed Vercel frontend URL (*e.g., `https://your-jarvis.vercel.app`*) for CORS configuration.
+
+#### **Frontend Environment Variables** (Build step variable):
+- `VITE_API_URL`: Path or URL of the backend API (*e.g., `https://your-jarvis.vercel.app/api`* or `/api`).
+
+### 3. Supabase Database Configuration
+For persistent cloud database storage across Vercel serverless function invocations:
+1. Create a project in [Supabase](https://supabase.com/).
+2. Copy the Connection String from **Project Settings $\rightarrow$ Database**.
+3. Set `DATABASE_URL` in Vercel Project Settings to your Supabase Postgres connection string. SQLAlchemy will automatically initialize tables upon deployment.
+

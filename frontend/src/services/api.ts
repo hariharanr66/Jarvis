@@ -1,6 +1,17 @@
 import type { Conversation, ChatResponsePayload, HealthStatus, Memory, MemoryCreatePayload } from '../types/jarvis';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+const getApiBaseUrl = (): string => {
+  const envUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL;
+  if (envUrl) {
+    return envUrl.endsWith('/api') ? envUrl : `${envUrl.replace(/\/$/, '')}/api`;
+  }
+  if (import.meta.env.PROD) {
+    return '/api';
+  }
+  return 'http://localhost:8000/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export async function checkHealth(): Promise<HealthStatus> {
   const response = await fetch(`${API_BASE_URL}/health`);

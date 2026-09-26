@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     HOST: str = "0.0.0.0"
     PORT: int = 8000
     FRONTEND_URL: str = "http://localhost:5173"
+    ALLOWED_ORIGINS: Optional[str] = None
     
     DATABASE_URL: str = "sqlite:///./jarvis.db"
     
@@ -30,6 +31,13 @@ class Settings(BaseSettings):
     class Config:
         env_file = str(ENV_PATH)
         extra = "ignore"
+
+    @property
+    def active_database_url(self) -> str:
+        url = self.DATABASE_URL or "sqlite:///./jarvis.db"
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        return url
 
     @property
     def active_gemini_model(self) -> str:

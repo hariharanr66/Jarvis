@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Brain, Plus, Trash2, Search, Sparkles, Folder, Target, Award, Star, Tag, User, Clock, Edit2, Check } from 'lucide-react';
+import { X, Brain, Plus, Trash2, Search, Sparkles, Folder, Target, Award, Tag, User, Clock } from 'lucide-react';
 import type { Memory, MemoryCreatePayload } from '../types/jarvis';
 import * as api from '../services/api';
 
@@ -18,8 +18,6 @@ export const MemoryManagerModal: React.FC<MemoryManagerModalProps> = ({
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isAdding, setIsAdding] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editValue, setEditValue] = useState<string>('');
 
   // Form State
   const [category, setCategory] = useState('personal');
